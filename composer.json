@@ -1,0 +1,4 @@
+{
+  "name": "ShoppingCart",
+  "description": "Simple shipping cart using decoupled Symfony, DDD and homemade bus and CQRS"
+}

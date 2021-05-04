@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  php_app_shoppingcart:
+    build:
+      context: etc/infrastructure/php
+      dockerfile: Dockerfile
+    container_name: php_app_shoppingcart
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - 9001:9000
+
+  nginx_server_shoppingcart:
+    image: nginx:latest
+    container_name: nginx_server_shoppingcart
+    ports:
+      - 8000:80
+    volumes:
+      - ./etc/infrastructure/nginx/conf.d:/etc/nginx/conf.d
+      - ./apps/Symfony/public/:/app/apps/Symfony/public
+    depends_on:
+      - php_app_shoppingcart
