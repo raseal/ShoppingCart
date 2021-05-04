@@ -1,2 +1,13 @@
 vendor
 /.idea
+apps/**/var
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/apps/Symfony/config/secrets/prod/prod.decrypt.private.php
+/apps/Symfony/public/bundles/
+/apps/Symfony/var/
+/vendor/
+###< symfony/framework-bundle ###
