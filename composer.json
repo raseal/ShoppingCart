@@ -1,4 +1,4 @@
 {
-  "name": "ShoppingCart",
+  "name": "raseal/shopping-cart",
   "description": "Simple shipping cart using decoupled Symfony, DDD and homemade bus and CQRS"
 }
