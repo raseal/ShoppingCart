@@ -1,4 +1,20 @@
 {
   "name": "raseal/shopping-cart",
-  "description": "Simple shipping cart using decoupled Symfony, DDD and homemade bus and CQRS"
+  "description": "Simple shipping cart using decoupled Symfony, DDD and homemade bus and CQRS",
+  "autoload": {
+    "psr-4": {
+      "Shared\\": "src/Shared",
+      "SymfonyApp\\": "apps/Symfony/src"
+    }
+  },
+  "require": {
+    "symfony/flex": "^1.12"
+  },
+  "extra": {
+    "bin-dir": "apps/Symfony/bin",
+    "config-dir": "apps/Symfony/config",
+    "src-dir": "apps/Symfony/src",
+    "var-dir": "apps/Symfony/var",
+    "public-dir": "apps/Symfony/public"
+  }
 }
