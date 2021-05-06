@@ -1,5 +1,5 @@
 all: help
-#.PHONY: help status build composer-install build-container start stop shell
+#.PHONY: help status build comp-install build-container start stop shell cc
 
 current-dir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -11,7 +11,7 @@ status:
 	@docker-compose ps
 
 ## build:		Start container and install packages
-build: build-container start composer-install
+build: build-container start comp-install
 
 ## build-container:Rebuild a container
 build-container:
@@ -37,6 +37,10 @@ destroy:
 shell:
 	@docker-compose exec php_app_shoppingcart sh
 
-## install:	Install packages
-composer-install:
-	docker-compose exec php_app_shoppingcart composer install
+## comp-install:	Install packages
+comp-install:
+	@docker-compose exec php_app_shoppingcart composer install
+
+## cc:		Clear Symfony cache
+cc:
+	@docker-compose exec php_app_shoppingcart php apps/Symfony/bin/console cache:clear
