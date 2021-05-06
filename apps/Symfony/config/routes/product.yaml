@@ -1,0 +1,10 @@
+product_retrieve:
+  path: /products/{id}
+  controller: SymfonyApp\Controller\Shop\ProductController::retrieve
+  defaults: { id: null }
+  methods: [GET]
+
+product_create:
+  path: /products
+  controller: SymfonyApp\Controller\Shop\ProductController::create
+  methods: [POST]
