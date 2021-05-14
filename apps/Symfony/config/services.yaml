@@ -16,6 +16,18 @@ services:
     SymfonyApp\:
         resource: '../src/'
         tags: ['controller.service_arguments']
+    Shared\:
+        resource: '../../../src/Shared'
+    Shop\:
+        resource: '../../../src/Shop'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    _instanceof:
+        Shared\Domain\Bus\Command\CommandHandler:
+            tags: ['command.handler']
+
+    Shared\Infrastructure\Bus\Command\SymfonySyncCommandBus:
+        arguments: [!tagged command.handler]
+        lazy: true
+        public: true
