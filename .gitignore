@@ -1,6 +1,7 @@
 vendor
 /.idea
 apps/**/var
+var
 
 ###> symfony/framework-bundle ###
 /.env.local

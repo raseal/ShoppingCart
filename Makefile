@@ -44,3 +44,7 @@ comp-install:
 ## cc:		Clear Symfony cache
 cc:
 	@docker-compose exec php_app_shoppingcart php apps/Symfony/bin/console cache:clear
+
+## mysql:		Interactive shell inside mysql
+mysql:
+	@docker-compose exec mysql_shoppingcart sh
