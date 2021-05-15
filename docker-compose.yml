@@ -11,6 +11,8 @@ services:
     working_dir: /app
     ports:
       - 9001:9000
+    depends_on:
+      - mysql_shoppingcart
 
   nginx_server_shoppingcart:
     image: nginx:latest
