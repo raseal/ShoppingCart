@@ -34,9 +34,9 @@ services:
       MYSQL_PASSWORD: ${DATABASE_PASSWD}
       MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWD}
     ports:
-    - 3306:3306
+    - 3306:${DATABASE_PORT}
     expose:
-      - 3306
+      - ${DATABASE_PORT}
     volumes:
     - ./var/MySQL:/var/lib/mysql
 
