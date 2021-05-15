@@ -27,7 +27,15 @@ services:
         Shared\Domain\Bus\Command\CommandHandler:
             tags: ['command.handler']
 
+        Shared\Domain\Bus\Query\QueryHandler:
+            tags: ['query.handler']
+
     Shared\Infrastructure\Bus\Command\SymfonySyncCommandBus:
         arguments: [!tagged command.handler]
+        lazy: true
+        public: true
+
+    Shared\Infrastructure\Bus\Query\SymfonySyncQueryBus:
+        arguments: [!tagged query.handler]
         lazy: true
         public: true
