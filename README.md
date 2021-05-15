@@ -11,6 +11,7 @@ You can interact with this app via the following use-cases:
 
 ## Running the application
 Run `make build` first, in order to build the environment and install all the dependencies. Then you can use any of the following:
+- `make mimi`: This command will create all database tables
 - `make start`: This command will start the app
 - `make stop`: This command will stop the app
 - `make shell`: This command will open a shell inside the `app-container`

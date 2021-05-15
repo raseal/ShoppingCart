@@ -48,3 +48,7 @@ cc:
 ## mysql:		Interactive shell inside mysql
 mysql:
 	@docker-compose exec mysql_shoppingcart sh
+
+## mimi:		Execute all Doctrine migrations
+mimi:
+	@docker-compose exec php_app_shoppingcart php apps/Symfony/bin/console  doctrine:migrations:migrate --no-interaction
