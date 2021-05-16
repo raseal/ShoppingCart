@@ -6,6 +6,6 @@ namespace Shop\Product\Domain;
 
 use Shared\Domain\ValueObject\FloatValueObject;
 
-class OfferPrice extends FloatValueObject
+final class OfferPrice extends FloatValueObject
 {
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shop\Product\Domain;
 
-class Product
+final class Product
 {
     public function __construct(
         private ProductId $id,

@@ -11,7 +11,7 @@ use Shop\Product\Domain\ProductDoesNotExist;
 use Shop\Product\Domain\ProductId;
 use Shop\Product\Domain\ProductRepository;
 
-class FindOneProductQueryHandler implements QueryHandler
+final class FindOneProductQueryHandler implements QueryHandler
 {
     public function __construct(
         private ProductRepository $product_repository

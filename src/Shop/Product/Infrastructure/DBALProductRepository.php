@@ -12,7 +12,7 @@ use Shop\Product\Domain\ProductId;
 use Shop\Product\Domain\ProductName;
 use Shop\Product\Domain\ProductRepository;
 
-class DBALProductRepository implements ProductRepository
+final class DBALProductRepository implements ProductRepository
 {
     public function __construct(
         private Connection $connection

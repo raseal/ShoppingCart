@@ -7,7 +7,7 @@ namespace Shop\Product\Domain;
 use Shared\Domain\DomainError;
 use function sprintf;
 
-class ProductDoesNotExist extends DomainError
+final class ProductDoesNotExist extends DomainError
 {
     private ProductId $product_id;
 

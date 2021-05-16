@@ -7,7 +7,7 @@ namespace Shop\Product\Application\Find;
 use Shared\Domain\Bus\Query\Response;
 use Shop\Product\Domain\Product;
 
-class ProductResponse implements Response
+final class ProductResponse implements Response
 {
     private function __construct(
         private string $id,
