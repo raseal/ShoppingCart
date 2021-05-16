@@ -9,14 +9,17 @@ use Shared\Domain\Bus\Command\Command;
 use Shared\Domain\Bus\Command\CommandBus;
 use Shared\Domain\Bus\Query\Query;
 use Shared\Domain\Bus\Query\QueryBus;
-use Shared\Domain\Bus\Query\Response;
+use Shared\Domain\Bus\Query\Response as QueryResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 use function json_decode;
 
 abstract class Controller extends AbstractController
 {
     public function __construct(
+        protected SerializerInterface $serializer,
         protected CommandBus $command_bus,
         protected QueryBus $query_bus
     ) {}
@@ -26,7 +29,7 @@ abstract class Controller extends AbstractController
         $this->command_bus->dispatch($command);
     }
 
-    protected function ask(Query $query): Response
+    protected function ask(Query $query): QueryResponse
     {
         return $this->query_bus->ask($query);
     }
@@ -39,5 +42,16 @@ abstract class Controller extends AbstractController
     protected function createRandomUuidAsString(): string
     {
         return Uuid::uuid4()->toString();
+    }
+
+    protected function createApiResponse(mixed $data, int $status_code = Response::HTTP_OK): Response
+    {
+        return new Response(
+            $this->serializer->serialize($data, 'json'),
+            $status_code,
+            [
+                'Content-Type' => 'application/json',
+            ]
+        );
     }
 }
