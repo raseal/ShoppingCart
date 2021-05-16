@@ -8,6 +8,7 @@ use Doctrine\DBAL\Driver\Connection;
 use Shop\Product\Domain\OfferPrice;
 use Shop\Product\Domain\Price;
 use Shop\Product\Domain\Product;
+use Shop\Product\Domain\ProductCollection;
 use Shop\Product\Domain\ProductId;
 use Shop\Product\Domain\ProductName;
 use Shop\Product\Domain\ProductRepository;
@@ -68,5 +69,40 @@ SQL;
             new Price((float)$product_data['price']),
             new OfferPrice((float)$product_data['offer_price'])
         );
+    }
+
+    public function findAll(): ProductCollection
+    {
+        $query = <<<SQL
+SELECT
+       BIN_TO_UUID(id) AS id,
+       name,
+       price,
+       offer_price
+FROM 
+     product
+SQL;
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+
+        $products = $statement->fetchAllAssociative();
+
+        return $this->hydrateItems($products);
+    }
+
+    private function hydrateItems(array $items): ProductCollection
+    {
+        $data = [];
+
+        foreach ($items as $item) {
+            $data[] = new Product(
+                new ProductId($item['id']),
+                new ProductName($item['name']),
+                new Price((float)$item['price']),
+                new OfferPrice((float)$item['offer_price'])
+            );
+        }
+
+        return new ProductCollection($data);
     }
 }
