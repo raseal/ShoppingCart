@@ -1,7 +1,6 @@
-product_retrieve:
+product_retrieve_one:
   path: /products/{id}
-  controller: SymfonyApp\Controller\Shop\ProductController::retrieve
-  defaults: { id: null }
+  controller: SymfonyApp\Controller\Shop\ProductController::retrieveOne
   methods: [GET]
 
 product_create:
