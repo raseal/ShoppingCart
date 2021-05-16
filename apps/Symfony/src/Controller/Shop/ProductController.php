@@ -28,16 +28,21 @@ final class ProductController extends Controller
 
     public function create(Request $request): Response
     {
-        $parameters = $this->getPayloadAsArray($request);
-        $command = new CreateProductCommand(
-            $this->createRandomUuidAsString(),
-            $parameters['name'],
-            (float)$parameters['price'],
-            (float)$parameters['offer_price']
-        );
+        try {
+            $parameters = $this->getPayloadAsArray($request);
+            $command = new CreateProductCommand(
+                $this->createRandomUuidAsString(),
+                $parameters['name'],
+                (float)$parameters['price'],
+                (float)$parameters['offer_price']
+            );
 
-        $this->dispatch($command);
+            $this->dispatch($command);
 
-        return new Response(null, Response::HTTP_CREATED);
+            return $this->createApiResponse([], Response::HTTP_CREATED);
+
+        } catch (Throwable $exception) {
+            return $this->createApiResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
     }
 }

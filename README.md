@@ -6,8 +6,8 @@ You can interact with this app via the following use-cases:
 | Endpoint      | Verb | Descriptions                                                                                     |
 |---------------|------|--------------------------------------------------------------------------------------------------|
 | products      | POST | Create a product (you must specify in the payload the `name`, `price` and `offer_price` values)  |
-| products/{id} | GET  | Find a product that matches with the provided identifier (or all products if no id is specified) |
-|               |      |                                                                                                  |
+| products/{id} | GET  | Find a product that matches with the provided identifier                                         |
+| products/     | GET  | Get all products                                                                                 |
 
 ## Running the application
 Run `make build` first, in order to build the environment and install all the dependencies. Then you can use any of the following:

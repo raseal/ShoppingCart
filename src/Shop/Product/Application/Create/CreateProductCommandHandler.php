@@ -9,6 +9,7 @@ use Shared\Domain\Bus\Command\CommandHandler;
 use Shop\Product\Domain\OfferPrice;
 use Shop\Product\Domain\Price;
 use Shop\Product\Domain\Product;
+use Shop\Product\Domain\ProductAlreadyExists;
 use Shop\Product\Domain\ProductId;
 use Shop\Product\Domain\ProductName;
 use Shop\Product\Domain\ProductRepository;
@@ -29,6 +30,10 @@ final class CreateProductCommandHandler implements CommandHandler
         $name = new ProductName($command->name());
         $price = new Price($command->price());
         $offer_price = (null === $command->offerPrice()) ? null : new OfferPrice($command->offerPrice());
+
+        if (null !== $this->product_repository->findById($id)) {
+            throw new ProductAlreadyExists($id);
+        }
 
         $product = new Product($id, $name, $price, $offer_price);
 

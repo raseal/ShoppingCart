@@ -20,7 +20,16 @@ class DBALProductRepository implements ProductRepository
 
     public function save(Product $product): void
     {
-        $query = 'INSERT INTO product(id, name, price, offer_price) VALUES(UUID_TO_BIN(:id), :name, :price, :offer_price)';
+        $query = <<<SQL
+INSERT INTO product(id, name, price, offer_price) VALUES
+    (
+     UUID_TO_BIN(:id), 
+     :name, 
+     :price, 
+     :offer_price
+     )
+SQL;
+
         $statement = $this->connection->prepare($query);
         $statement->bindValue('id', $product->id()->value());
         $statement->bindValue('name', $product->name()->value());
