@@ -6,11 +6,11 @@
       "Shared\\": "src/Shared",
       "Shop\\": "src/Shop",
       "SymfonyApp\\": "apps/Symfony/src"
-    },
-    "autoload-dev": {
-      "psr-4": {
-        "Test\\":"tests"
-      }
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\": "tests"
     }
   },
   "require": {
