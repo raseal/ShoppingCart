@@ -52,3 +52,7 @@ mysql:
 ## mimi:		Execute all Doctrine migrations
 mimi:
 	@docker-compose exec php_app_shoppingcart php apps/Symfony/bin/console  doctrine:migrations:migrate --no-interaction
+
+## unit-tests:	Execute all unit tests
+unit-tests:
+	@docker-compose exec php_app_shoppingcart php vendor/bin/phpunit tests/
