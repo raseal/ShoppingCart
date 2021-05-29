@@ -8,8 +8,12 @@ use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Shop\Product\Application\Create\CreateProductCommand;
 use Shop\Product\Application\Create\CreateProductCommandHandler;
+use Shop\Product\Domain\OfferPrice;
+use Shop\Product\Domain\Price;
+use Shop\Product\Domain\Product;
 use Shop\Product\Domain\ProductAlreadyExists;
 use Shop\Product\Domain\ProductId;
+use Shop\Product\Domain\ProductName;
 use Shop\Product\Domain\ProductRepository;
 
 class CreateProductCommandHandlerTest extends TestCase
@@ -37,13 +41,17 @@ class CreateProductCommandHandlerTest extends TestCase
     {
         $this->expectException(ProductAlreadyExists::class);
 
-        $valid_id = Uuid::uuid4()->toString();
-        $product_id = new ProductId($valid_id);
+        $product = new Product(
+            new ProductId(Uuid::uuid4()->toString()),
+            new ProductName('name'),
+            new Price(12),
+            new OfferPrice(10)
+        );
 
         $this->product_repository
             ->expects(self::once())
-            ->method('save')
-            ->willThrowException(new ProductAlreadyExists($product_id));
+            ->method('findById')
+            ->willReturn($product);
 
         $handler = new CreateProductCommandHandler($this->product_repository);
         $handler->execute($this->command);
