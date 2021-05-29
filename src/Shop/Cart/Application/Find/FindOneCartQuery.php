@@ -6,7 +6,7 @@ namespace Shop\Cart\Application\Find;
 
 use Shared\Domain\Bus\Query\Query;
 
-class FindOneCartQuery implements Query
+final class FindOneCartQuery implements Query
 {
     public function __construct(
         private string $cart_id

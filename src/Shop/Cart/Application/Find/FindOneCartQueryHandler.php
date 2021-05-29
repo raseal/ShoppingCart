@@ -11,7 +11,7 @@ use Shop\Cart\Domain\CartDoesNotExist;
 use Shop\Cart\Domain\CartId;
 use Shop\Cart\Domain\CartRepository;
 
-class FindOneCartQueryHandler implements QueryHandler
+final class FindOneCartQueryHandler implements QueryHandler
 {
     public function __construct(
         private CartRepository $cart_repository

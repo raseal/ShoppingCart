@@ -7,7 +7,7 @@ namespace Shop\Cart\Application\Find;
 use Shared\Domain\Bus\Query\Response;
 use Shop\Cart\Domain\Cart;
 
-class CartResponse implements Response
+final class CartResponse implements Response
 {
     private function __construct(
         private string $cart_id,
