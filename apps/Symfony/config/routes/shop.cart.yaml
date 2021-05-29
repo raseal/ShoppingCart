@@ -3,6 +3,11 @@ cart_retrieve_one:
   controller: SymfonyApp\Controller\Shop\Cart\RetrieveOneCartController
   methods: [GET]
 
+cart_retrieve_all:
+  path: /carts/
+  controller: SymfonyApp\Controller\Shop\Cart\RetrieveAllCartsController
+  methods: [GET]
+
 cart_create:
   path: /carts
   controller: SymfonyApp\Controller\Shop\Cart\CreateCartController

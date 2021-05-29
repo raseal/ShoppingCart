@@ -6,6 +6,7 @@ namespace Shop\Cart\Infrastructure;
 
 use Doctrine\DBAL\Driver\Connection;
 use Shop\Cart\Domain\Cart;
+use Shop\Cart\Domain\CartCollection;
 use Shop\Cart\Domain\CartId;
 use Shop\Cart\Domain\CartLines;
 use Shop\Cart\Domain\CartRepository;
@@ -65,5 +66,40 @@ SQL;
             new CartLines([]), // TODO: retrieve all cart lines
             new CartTotalAmount((float)$cart_data['total'])
         );
+    }
+
+    public function findAll(): CartCollection
+    {
+        // TODO: retrieve all cart lines
+        $query = <<<SQL
+SELECT
+       BIN_TO_UUID(id) AS id,
+       created,
+       total
+FROM 
+     cart
+SQL;
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+
+        $carts = $statement->fetchAllAssociative();
+
+         return $this->hydrateItems($carts);
+    }
+
+    private function hydrateItems(array $items): CartCollection
+    {
+        $data = [];
+
+        foreach ($items as $item) {
+            $data[] = new Cart(
+                new CartId($item['id']),
+                new CreationDate($item['created'], 'Y-m-d H:i:s'),
+                new CartLines([]), // TODO: retrieve cart lines
+                new CartTotalAmount((float)$item['total'])
+            );
+        }
+
+        return new CartCollection($data);
     }
 }
