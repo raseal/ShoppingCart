@@ -17,7 +17,7 @@ final class ProductDoesNotExist extends DomainError
         parent::__construct();
     }
 
-    function errorMessage(): string
+    public function errorMessage(): string
     {
         return sprintf(
             'The product <%s> does not exist.',

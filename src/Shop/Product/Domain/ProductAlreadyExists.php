@@ -17,7 +17,7 @@ final class ProductAlreadyExists extends DomainError
         parent::__construct();
     }
 
-    function errorMessage(): string
+    public function errorMessage(): string
     {
         return sprintf(
             'The product already exists: <%s>',

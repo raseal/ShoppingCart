@@ -17,7 +17,7 @@ final class CartAlreadyExists extends DomainError
         parent::__construct();
     }
 
-    function errorMessage(): string
+    public function errorMessage(): string
     {
         return sprintf(
             'The cart already exists: <%s>',
