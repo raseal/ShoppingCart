@@ -1,0 +1,4 @@
+cart_create:
+  path: /carts
+  controller: SymfonyApp\Controller\Shop\Cart\CreateCartController
+  methods: [POST]
