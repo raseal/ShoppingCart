@@ -21,7 +21,7 @@ class CreateCartController extends Controller
             );
             $this->dispatch($command);
 
-            return $this->createApiResponse([], Response::HTTP_CREATED);
+            return $this->createApiResponse('', Response::HTTP_CREATED);
 
         } catch (Throwable $exception) {
             return $this->createApiResponse($exception->getMessage(), Response::HTTP_BAD_REQUEST);
