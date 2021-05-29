@@ -9,7 +9,8 @@ You can interact with this app via the following use-cases:
 | products/{id} | GET  | Find a product that matches with the provided identifier                                         |
 | products/     | GET  | Get all products                                                                                 |
 | carts/        | POST | Create an empty cart                                                                             |
-| carts/{id}    | GET  | Get all available carts                                                                          |
+| carts/{id}    | GET  | Find a cart that matches with the provided identifier                                            |
+| carts/        | GET  | Get all carts                                                                                    |
 
 ## Running the application
 Run `make build` first, in order to build the environment and install all the dependencies. Then you can use any of the following:
