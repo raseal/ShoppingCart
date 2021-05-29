@@ -1,3 +1,8 @@
+cart_retrieve_one:
+  path: /carts/{id}
+  controller: SymfonyApp\Controller\Shop\Cart\RetrieveOneCartController
+  methods: [GET]
+
 cart_create:
   path: /carts
   controller: SymfonyApp\Controller\Shop\Cart\CreateCartController
