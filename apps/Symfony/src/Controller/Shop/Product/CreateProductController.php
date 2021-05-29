@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SymfonyApp\Controller\Shop\Product;
 
+use Ramsey\Uuid\Uuid;
 use Shared\Infrastructure\Symfony\Controller\Controller;
 use Shop\Product\Application\Create\CreateProductCommand;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,7 @@ final class CreateProductController extends Controller
         try {
             $parameters = $this->getPayloadAsArray($request);
             $command = new CreateProductCommand(
-                $this->createRandomUuidAsString(),
+                Uuid::uuid4()->toString(),
                 $parameters['name'],
                 (float)$parameters['price'],
                 (float)$parameters['offer_price']
