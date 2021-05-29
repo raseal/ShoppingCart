@@ -7,11 +7,11 @@ You can interact with this app via the following use-cases:
 |-------------------------------|--------|--------------------------------------------------------------------------------------------------|
 | products                      | POST   | Create a product (you must specify in the payload the `name`, `price` and `offer_price` values)  |
 | products/{id}                 | GET    | Find a product that matches with the provided identifier                                         |
-| products/                     | GET    | Get all products                                                                                 |
-| carts/                        | POST   | Create an empty cart                                                                             |
+| products                      | GET    | Get all products                                                                                 |
+| carts                         | POST   | Create an empty cart                                                                             |
 | carts/{id}                    | GET    | Find a cart that matches with the provided identifier                                            |
-| carts/                        | GET    | Get all carts                                                                                    |
-| carts/{cartId}/items/         | POST   | Add a product (you must specify in the payload the `item_id` and the `quantity`)                 |  
+| carts                         | GET    | Get all carts                                                                                    |
+| carts/{cartId}/items          | POST   | Add a product (you must specify in the payload the `item_id` and the `quantity`)                 |  
 | carts/{cartId}/items/{itemId} | PUT    | Update an added product (you must specify in the payload the `quantity`)                         |
 | carts/{cartId}/items/{itemId} | DELETE | Delete an added product                                                                          |
 
