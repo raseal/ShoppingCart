@@ -6,6 +6,7 @@ namespace Test\Shop\Product\Application\Find;
 
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
+use Shop\Product\Application\Find\FindOneProduct;
 use Shop\Product\Application\Find\FindOneProductQuery;
 use Shop\Product\Application\Find\FindOneProductQueryHandler;
 use Shop\Product\Application\Find\ProductResponse;
@@ -15,16 +16,15 @@ use Shop\Product\Domain\Product;
 use Shop\Product\Domain\ProductDoesNotExist;
 use Shop\Product\Domain\ProductId;
 use Shop\Product\Domain\ProductName;
-use Shop\Product\Domain\ProductRepository;
 
 class FindOneProductQueryHandlerTest extends TestCase
 {
-    private ProductRepository $product_repository;
     private FindOneProductQuery $query;
+    private FindOneProduct $find_one_product;
 
     public function setUp(): void
     {
-        $this->product_repository = $this->createMock(ProductRepository::class);
+        $this->find_one_product = $this->createMock(FindOneProduct::class);
         $this->query = new FindOneProductQuery(Uuid::uuid4()->toString());
     }
 
@@ -37,12 +37,12 @@ class FindOneProductQueryHandlerTest extends TestCase
             new OfferPrice(10)
         );
 
-        $this->product_repository
+        $this->find_one_product
             ->expects(self::once())
-            ->method('findById')
+            ->method('__invoke')
             ->willReturn($product);
 
-        $handler = new FindOneProductQueryHandler($this->product_repository);
+        $handler = new FindOneProductQueryHandler($this->find_one_product);
         $response = $handler->execute($this->query);
 
         self::assertInstanceOf(ProductResponse::class, $response);
@@ -52,12 +52,14 @@ class FindOneProductQueryHandlerTest extends TestCase
     {
         $this->expectException(ProductDoesNotExist::class);
 
-        $this->product_repository
-            ->expects(self::once())
-            ->method('findById')
-            ->willReturn(null);
+        $product_id = new ProductId(Uuid::uuid4()->toString());
 
-        $handler = new FindOneProductQueryHandler($this->product_repository);
+        $this->find_one_product
+            ->expects(self::once())
+            ->method('__invoke')
+            ->willThrowException(new ProductDoesNotExist($product_id));
+
+        $handler = new FindOneProductQueryHandler($this->find_one_product);
         $handler->execute($this->query);
     }
 }

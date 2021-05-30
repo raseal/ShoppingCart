@@ -7,14 +7,12 @@ namespace Shop\Product\Application\Find;
 use Shared\Domain\Bus\Query\Query;
 use Shared\Domain\Bus\Query\QueryHandler;
 use Shared\Domain\Bus\Query\Response;
-use Shop\Product\Domain\ProductDoesNotExist;
 use Shop\Product\Domain\ProductId;
-use Shop\Product\Domain\ProductRepository;
 
 final class FindOneProductQueryHandler implements QueryHandler
 {
     public function __construct(
-        private ProductRepository $product_repository
+        private FindOneProduct $find_one_product
     ) {}
 
     public function __invoke(FindOneProductQuery $query): Response
@@ -25,11 +23,7 @@ final class FindOneProductQueryHandler implements QueryHandler
     public function execute(Query $query): Response
     {
         $id = new ProductId($query->id());
-        $product = $this->product_repository->findById($id);
-
-        if (null === $product) {
-            throw new ProductDoesNotExist($id);
-        }
+        $product = $this->find_one_product->__invoke($id);
 
         return ProductResponse::fromProduct($product);
     }

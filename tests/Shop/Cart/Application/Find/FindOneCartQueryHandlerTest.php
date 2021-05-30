@@ -7,24 +7,24 @@ namespace Test\Shop\Cart\Application\Find;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Shop\Cart\Application\Find\CartResponse;
+use Shop\Cart\Application\Find\FindOneCart;
 use Shop\Cart\Application\Find\FindOneCartQuery;
 use Shop\Cart\Application\Find\FindOneCartQueryHandler;
 use Shop\Cart\Domain\Cart;
 use Shop\Cart\Domain\CartDoesNotExist;
 use Shop\Cart\Domain\CartId;
 use Shop\Cart\Domain\CartLines;
-use Shop\Cart\Domain\CartRepository;
 use Shop\Cart\Domain\CartTotalAmount;
 use Shop\Cart\Domain\CreationDate;
 
 class FindOneCartQueryHandlerTest extends TestCase
 {
-    private CartRepository $cart_repository;
+    private FindOneCart $find_one_cart;
     private FindOneCartQuery $query;
 
     public function setUp(): void
     {
-        $this->cart_repository = $this->createMock(CartRepository::class);
+        $this->find_one_cart = $this->createMock(FindOneCart::class);
         $this->query = new FindOneCartQuery(Uuid::uuid4()->toString());
     }
 
@@ -37,12 +37,12 @@ class FindOneCartQueryHandlerTest extends TestCase
             new CartTotalAmount(0)
         );
 
-        $this->cart_repository
+        $this->find_one_cart
             ->expects(self::once())
-            ->method('findById')
+            ->method('__invoke')
             ->willReturn($cart);
 
-        $handler = new FindOneCartQueryHandler($this->cart_repository);
+        $handler = new FindOneCartQueryHandler($this->find_one_cart);
         $response = $handler->execute($this->query);
 
         self::assertInstanceOf(CartResponse::class, $response);
@@ -52,12 +52,14 @@ class FindOneCartQueryHandlerTest extends TestCase
     {
         $this->expectException(CartDoesNotExist::class);
 
-        $this->cart_repository
-            ->expects(self::once())
-            ->method('findById')
-            ->willReturn(null);
+        $cart_id = new CartId(Uuid::uuid4()->toString());
 
-        $handler = new FindOneCartQueryHandler($this->cart_repository);
+        $this->find_one_cart
+            ->expects(self::once())
+            ->method('__invoke')
+            ->willThrowException(new CartDoesNotExist($cart_id));
+
+        $handler = new FindOneCartQueryHandler($this->find_one_cart);
         $handler->execute($this->query);
     }
 }
