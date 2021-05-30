@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shared\Domain;
+namespace Shared\Domain\Aggregate;
 
 use ArrayIterator;
 use Countable;

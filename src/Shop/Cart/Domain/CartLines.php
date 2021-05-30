@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Shop\Cart\Domain;
 
-use Shared\Domain\Collection;
+use Shared\Domain\Aggregate\Collection;
 
 final class CartLines extends Collection
 {
