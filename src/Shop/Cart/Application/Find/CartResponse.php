@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Shop\Cart\Application\Find;
 
+use JsonSerializable;
 use Shared\Domain\Bus\Query\Response;
 use Shop\Cart\Domain\Cart;
 
-final class CartResponse implements Response
+final class CartResponse implements Response, JsonSerializable
 {
     private function __construct(
         private string $cart_id,
@@ -26,23 +27,45 @@ final class CartResponse implements Response
         );
     }
 
-    public function getCartId(): string
+    public function cartId(): string
     {
         return $this->cart_id;
     }
 
-    public function getLines(): array
+    public function lines(): array
     {
         return $this->lines;
     }
 
-    public function getCreated(): string
+    public function created(): string
     {
         return $this->created;
     }
 
-    public function getTotalAmount(): float
+    public function totalAmount(): float
     {
         return $this->total_amount;
+    }
+
+    public function jsonSerialize(): array
+    {
+        $cart_lines = [];
+
+        foreach($this->lines() as $line) {
+            $cart_lines[] = [
+                'id' => $line->id()->value(),
+                'cartId' => $line->cartId()->value(),
+                'productId' => $line->productId()->value(),
+                'quantity' => $line->quantity()->value(),
+                'totalAmount' => $line->totalAmount()->value(),
+            ];
+        }
+
+        return [
+            'cartId' => $this->cartId(),
+            'lines' => $cart_lines,
+            'created' => $this->created(),
+            'totalAmount' => $this->totalAmount(),
+        ];
     }
 }

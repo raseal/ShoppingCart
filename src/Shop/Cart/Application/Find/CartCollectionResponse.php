@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Shop\Cart\Application\Find;
 
+use JsonSerializable;
 use Shared\Domain\Bus\Query\ResponseCollection;
 use Shop\Cart\Domain\CartCollection;
 
-class CartCollectionResponse extends ResponseCollection
+class CartCollectionResponse extends ResponseCollection implements JsonSerializable
 {
     protected function type(): string
     {
@@ -23,5 +24,10 @@ class CartCollectionResponse extends ResponseCollection
         }
 
         return new self($items);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->items();
     }
 }

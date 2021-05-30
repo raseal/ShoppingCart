@@ -8,10 +8,15 @@ use Doctrine\DBAL\Driver\Connection;
 use Shop\Cart\Domain\Cart;
 use Shop\Cart\Domain\CartCollection;
 use Shop\Cart\Domain\CartId;
+use Shop\Cart\Domain\CartLine;
+use Shop\Cart\Domain\CartLineId;
+use Shop\Cart\Domain\CartLineQuantity;
 use Shop\Cart\Domain\CartLines;
+use Shop\Cart\Domain\CartLineTotalAmount;
 use Shop\Cart\Domain\CartRepository;
 use Shop\Cart\Domain\CartTotalAmount;
 use Shop\Cart\Domain\CreationDate;
+use Shop\Product\Domain\ProductId;
 
 class DBALCartRepository implements CartRepository
 {
@@ -36,48 +41,55 @@ SQL;
         $statement->bindValue('total', $cart->totalAmount()->value());
 
         $statement->execute();
+        // TODO: save cart_lines
     }
 
     public function findById(CartId $cart_id): ?Cart
     {
         $query = <<<SQL
 SELECT
-       BIN_TO_UUID(id) AS id,
-       created,
-       total
+       BIN_TO_UUID(c.id) AS cart_id,
+       c.created AS cart_created,
+       c.total AS cart_total,
+       BIN_TO_UUID(cl.id) AS cart_line_id,
+       BIN_TO_UUID(cl.id_product) AS product_id,
+       cl.quantity,
+       cl.total AS total_line
 FROM 
-     cart
+     cart AS c
+    JOIN
+         cart_lines AS cl ON cl.id_cart = c.id
 WHERE 
-      id = UUID_TO_BIN(:id)
+      c.id = UUID_TO_BIN(:id)
 SQL;
         $statement = $this->connection->prepare($query);
         $statement->bindValue('id', $cart_id->value());
         $statement->execute();
 
-        $cart_data = $statement->fetchAssociative();
+        $cart_data = $statement->fetchAllAssociative();
 
-        if (false === $cart_data) {
+        if (0 === count($cart_data)) {
             return null;
         }
 
-        return new Cart(
-            new CartId($cart_data['id']),
-            new CreationDate($cart_data['created'], 'Y-m-d H:i:s'),
-            new CartLines([]), // TODO: retrieve all cart lines
-            new CartTotalAmount((float)$cart_data['total'])
-        );
+        return $this->hydrateItem($cart_data);
     }
 
     public function findAll(): CartCollection
     {
-        // TODO: retrieve all cart lines
         $query = <<<SQL
 SELECT
-       BIN_TO_UUID(id) AS id,
-       created,
-       total
-FROM 
-     cart
+       BIN_TO_UUID(c.id) AS cart_id,
+       c.created AS cart_created,
+       c.total AS cart_total,
+       BIN_TO_UUID(cl.id) AS cart_line_id,
+       BIN_TO_UUID(cl.id_product) AS product_id,
+       cl.quantity,
+       cl.total AS total_line
+FROM
+     cart AS c
+     JOIN
+         cart_lines AS cl ON cl.id_cart = c.id
 SQL;
         $statement = $this->connection->prepare($query);
         $statement->execute();
@@ -89,17 +101,44 @@ SQL;
 
     private function hydrateItems(array $items): CartCollection
     {
+        $cart_info = [];
         $data = [];
 
         foreach ($items as $item) {
-            $data[] = new Cart(
-                new CartId($item['id']),
-                new CreationDate($item['created'], 'Y-m-d H:i:s'),
-                new CartLines([]), // TODO: retrieve cart lines
-                new CartTotalAmount((float)$item['total'])
-            );
+            $cart_info[$item['cart_id']][] = $item;
+        }
+
+        foreach ($cart_info as $info) {
+            $data[] = $this->hydrateItem($info);
         }
 
         return new CartCollection($data);
+    }
+
+    private function hydrateItem(array $item): Cart
+    {
+        return new Cart(
+            new CartId($item[0]['cart_id']),
+            new CreationDate($item[0]['cart_created'], 'Y-m-d H:i:s'),
+            $this->getCartLines($item),
+            new CartTotalAmount((float)$item[0]['cart_total'])
+        );
+    }
+
+    private function getCartLines(array $lines): CartLines
+    {
+        $result = [];
+
+        foreach($lines as $line) {
+            $result[] = new CartLine(
+                new CartLineId($line['cart_line_id']),
+                new CartId($line['cart_id']),
+                new ProductId($line['product_id']),
+                new CartLineQuantity((int)$line['quantity']),
+                new CartLineTotalAmount((float)$line['total_line'])
+            );
+        }
+
+        return new CartLines($result);
     }
 }
