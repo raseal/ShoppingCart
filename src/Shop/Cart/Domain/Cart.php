@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Shop\Cart\Domain;
 
-final class Cart
+use Shared\Domain\Aggregate\AggregateRoot;
+
+final class Cart extends AggregateRoot
 {
     public function __construct(
         private CartId $id,
