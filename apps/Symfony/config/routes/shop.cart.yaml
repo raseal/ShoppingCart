@@ -12,3 +12,8 @@ cart_create:
   path: /carts
   controller: SymfonyApp\Controller\Shop\Cart\CreateCartController
   methods: [POST]
+
+add_product_to_cart:
+  path: /carts/{cartId}/items
+  controller: SymfonyApp\Controller\Shop\Cart\AddProductToCartController
+  methods: [POST]

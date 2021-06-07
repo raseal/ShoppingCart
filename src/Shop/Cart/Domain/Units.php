@@ -6,6 +6,6 @@ namespace Shop\Cart\Domain;
 
 use Shared\Domain\ValueObject\IntValueObject;
 
-class CartLineQuantity extends IntValueObject
+class Units extends IntValueObject
 {
 }

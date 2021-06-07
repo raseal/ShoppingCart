@@ -10,7 +10,7 @@ services:
       - ./:/app
     working_dir: /app
     ports:
-      - 9001:9000
+      - 9001:9003
     depends_on:
       - mysql_shoppingcart
 

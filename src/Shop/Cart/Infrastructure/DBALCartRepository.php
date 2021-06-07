@@ -10,12 +10,12 @@ use Shop\Cart\Domain\CartCollection;
 use Shop\Cart\Domain\CartId;
 use Shop\Cart\Domain\CartLine;
 use Shop\Cart\Domain\CartLineId;
-use Shop\Cart\Domain\CartLineQuantity;
 use Shop\Cart\Domain\CartLines;
 use Shop\Cart\Domain\CartLineTotalAmount;
 use Shop\Cart\Domain\CartRepository;
 use Shop\Cart\Domain\CartTotalAmount;
 use Shop\Cart\Domain\CreationDate;
+use Shop\Cart\Domain\Units;
 use Shop\Product\Domain\ProductId;
 
 class DBALCartRepository implements CartRepository
@@ -26,22 +26,10 @@ class DBALCartRepository implements CartRepository
 
     public function save(Cart $cart): void
     {
-        $query = <<<SQL
-INSERT INTO cart(id, created, total) VALUES
-    (
-     UUID_TO_BIN(:id), 
-     :created, 
-     :total 
-     )
-SQL;
-
-        $statement = $this->connection->prepare($query);
-        $statement->bindValue('id', $cart->id()->value());
-        $statement->bindValue('created', $cart->creationDate()->value());
-        $statement->bindValue('total', $cart->totalAmount()->value());
-
-        $statement->execute();
-        // TODO: save cart_lines
+        $this->connection->beginTransaction();
+        $this->saveCart($cart);
+        $this->saveCartLines($cart->cartLines());
+        $this->connection->commit();
     }
 
     public function findById(CartId $cart_id): ?Cart
@@ -57,11 +45,12 @@ SELECT
        cl.total AS total_line
 FROM 
      cart AS c
-    JOIN
+    LEFT JOIN
          cart_lines AS cl ON cl.id_cart = c.id
 WHERE 
       c.id = UUID_TO_BIN(:id)
 SQL;
+
         $statement = $this->connection->prepare($query);
         $statement->bindValue('id', $cart_id->value());
         $statement->execute();
@@ -88,7 +77,7 @@ SELECT
        cl.total AS total_line
 FROM
      cart AS c
-     JOIN
+     LEFT JOIN
          cart_lines AS cl ON cl.id_cart = c.id
 SQL;
         $statement = $this->connection->prepare($query);
@@ -130,15 +119,64 @@ SQL;
         $result = [];
 
         foreach($lines as $line) {
+
+            if (null === $line['cart_line_id']) {
+                continue;
+            }
+
             $result[] = new CartLine(
                 new CartLineId($line['cart_line_id']),
                 new CartId($line['cart_id']),
                 new ProductId($line['product_id']),
-                new CartLineQuantity((int)$line['quantity']),
+                new Units((int)$line['quantity']),
+                null,
                 new CartLineTotalAmount((float)$line['total_line'])
             );
         }
 
         return new CartLines($result);
+    }
+
+    private function saveCart(Cart $cart): void
+    {
+        $query = <<<SQL
+REPLACE INTO cart(id, created, total) VALUES
+    (
+     UUID_TO_BIN(:id), 
+     :created, 
+     :total 
+     )
+SQL;
+
+        $statement = $this->connection->prepare($query);
+        $statement->bindValue('id', $cart->id()->value());
+        $statement->bindValue('created', $cart->creationDate()->value());
+        $statement->bindValue('total', $cart->totalAmount()->value());
+        $statement->execute();
+    }
+
+    private function saveCartLines(CartLines $cart_lines): void
+    {
+        $query = <<<SQL
+REPLACE INTO cart_lines(id, id_cart, id_product, quantity, total) VALUES
+    (
+        UUID_TO_BIN(?),
+        UUID_TO_BIN(?),
+        UUID_TO_BIN(?),
+        ?,
+        ?
+    )
+SQL;
+        $statement = $this->connection->prepare($query);
+
+        foreach($cart_lines->items() as $item) {
+            $statement->execute([
+                $item->id()->value(),
+                $item->cartId()->value(),
+                $item->productId()->value(),
+                $item->quantity()->value(),
+                $item->totalAmount()->value(),
+            ]);
+        }
     }
 }

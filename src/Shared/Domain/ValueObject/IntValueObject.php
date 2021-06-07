@@ -19,4 +19,9 @@ abstract class IntValueObject
     {
         return $value->value() === $this->value();
     }
+
+    public function add(self $value): self
+    {
+        return new static($value->value() + $this->value());
+    }
 }
